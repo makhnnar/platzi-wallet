@@ -14,6 +14,8 @@ import com.cristianvillamil.platziwallet.ui.home.FavoriteTransfer
 import com.cristianvillamil.platziwallet.ui.home.HomeContract
 import com.cristianvillamil.platziwallet.ui.home.data.HomeInteractor
 import com.cristianvillamil.platziwallet.ui.home.presenter.HomePresenter
+import com.cristianvillamil.platziwallet.ui.observable.BalanceObserver
+import com.cristianvillamil.platziwallet.ui.observable.Observer
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -22,6 +24,8 @@ class HomeFragment : Fragment(), HomeContract.View {
     private val favoriteTransferAdapter = FavoriteTransferAdapter()
 
     private var homePresenter : HomeContract.Presenter? = null
+
+    private val balanceObserver = BalanceObserver()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +57,13 @@ class HomeFragment : Fragment(), HomeContract.View {
             HomeInteractor()
         )
         homePresenter?.retrieveFavoriteTransfers()
+        balanceObserver.addObserver(
+            object : Observer {
+                override fun notifyChange(newValue: Double) {
+                    amountValueTextView.text = "$ $newValue"
+                }
+            }
+        )
     }
 
     override fun onDestroyView() {
